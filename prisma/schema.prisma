@@ -1,0 +1,47 @@
+datasource db {
+  provider = "sqlite"
+  url      = "mysql://127.0.0.1:3306/personal-finance-manager" 
+} 
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String
+  name        String
+  transactions Transaction[]
+  budgets     Budget[]
+}
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  name          String
+  transactions  Transaction[]
+}
+
+model Transaction {
+  id          Int       @id @default(autoincrement())
+  amount      Float
+  date        DateTime  @default(now())
+  type        String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+}
+
+model Budget {
+  id              Int      @id @default(autoincrement())
+  amount          Float
+  remainingAmount Float
+  month           Int
+  year            Int
+  user            User     @relation(fields: [userId], references: [id])
+  userId          Int
+  category        Category @relation(fields: [categoryId], references: [id])
+  categoryId      Int
+}
+
